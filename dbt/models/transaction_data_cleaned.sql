@@ -8,7 +8,7 @@ WITH deduplicated AS (
                 PARTITION BY transaction_id
                 ORDER BY rowid
             ) AS row_num
-        FROM {{ source('raw', 'transaction_data') }}
+        FROM {{ source('raw', 'raw_transaction_data') }}
     )
     WHERE row_num = 1
 
@@ -102,14 +102,31 @@ standardized AS (
     asset_class,
     instrument_name,
     isin,
-    transaction_type,
-    quantity,
-    price_per_unit,
+    CASE
+        WHEN LOWER(TRIM(CAST(transaction_type AS TEXT))) IN ('buy', 'b')
+            THEN 'buy'
+
+        WHEN LOWER(TRIM(CAST(transaction_type AS TEXT))) IN ('sell', 's')
+            THEN 'sell'
+
+        WHEN LOWER(TRIM(CAST(transaction_type AS TEXT))) = 'dividend'
+            THEN 'dividend'
+
+        WHEN LOWER(TRIM(CAST(transaction_type AS TEXT))) = 'deposit'
+            THEN 'deposit'
+
+        WHEN LOWER(TRIM(CAST(transaction_type AS TEXT))) = 'withdrawal'
+            THEN 'withdrawal'
+
+        ELSE NULL
+    END AS transaction_type,
+    CAST(quantity AS REAL) AS quantity,
+    CAST(price_per_unit AS REAL) AS price_per_unit,
     currency,
-    gross_amount,
-    fee,
+    CAST(gross_amount AS REAL) AS gross_amount,
+    CAST(fee AS REAL) AS fee,
     fee_currency,
-    deduplicated.status,
+    deduplicated.status AS 'status',
     notes
 
     FROM deduplicated

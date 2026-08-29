@@ -4,4 +4,4 @@ sources:
   - name: raw
     schema: main
     tables:
-      - name: transaction_data
+      - name: raw_transaction_data

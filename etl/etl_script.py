@@ -7,8 +7,8 @@ from datetime import datetime
 class EtopsPipeline:
     def __init__(
             self,
-            source_path: str = 'data/raw/transaction_data.csv',
-            sql_path: str = 'data/transactions.db',
+            source_path: str = "/opt/airflow/data/raw/transaction_data.csv",
+            sql_path: str = "/opt/airflow/data/transactions.db",
             table_name: str = 'raw_transaction_data'
             ):
         self.source_path = source_path
