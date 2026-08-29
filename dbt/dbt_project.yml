@@ -1,0 +1,10 @@
+name: transaction_data_project
+version: '1.0.0'
+
+profile: transaction_data_project
+
+model-paths: ["models"]
+
+models:
+  transaction_data_project:
+    +materialized: table
